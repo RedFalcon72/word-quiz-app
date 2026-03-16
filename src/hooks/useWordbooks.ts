@@ -27,66 +27,41 @@ const DEFAULT_WORDBOOKS: Wordbook[] = [
 ];
 
 type UnknownRecord = Record<string, unknown>;
+const isObject = (v: unknown): v is UnknownRecord =>
+  typeof v === "object" && v !== null;
+const isCardStatus = (v: unknown): v is Card["status"] =>
+  v === "known" || v === "unknown";
 
-const isObject = (value: unknown): value is UnknownRecord => {
-  return typeof value === "object" && value !== null;
-};
-
-const isCardStatus = (value: unknown): value is Card["status"] => {
-  return value === "known" || value === "unknown";
-};
-
-const isCard = (value: unknown): value is Card => {
-  if (!isObject(value)) {
-    return false;
-  }
-
+const isCard = (v: unknown): v is Card => {
+  if (!isObject(v)) return false;
   return (
-    typeof value.id === "string" &&
-    typeof value.front === "string" &&
-    typeof value.back === "string" &&
-    isCardStatus(value.status)
+    typeof v.id === "string" &&
+    typeof v.front === "string" &&
+    typeof v.back === "string" &&
+    isCardStatus(v.status)
   );
 };
 
-const isWordbook = (value: unknown): value is Wordbook => {
-  if (!isObject(value)) {
-    return false;
-  }
-
+const isWordbook = (v: unknown): v is Wordbook => {
+  if (!isObject(v)) return false;
   return (
-    typeof value.id === "string" &&
-    typeof value.title === "string" &&
-    typeof value.description === "string" &&
-    typeof value.updatedAt === "string" &&
-    Array.isArray(value.cards) &&
-    value.cards.every((card) => isCard(card))
+    typeof v.id === "string" &&
+    typeof v.title === "string" &&
+    Array.isArray(v.cards) &&
+    v.cards.every(isCard)
   );
 };
 
-const isWordbookArray = (value: unknown): value is Wordbook[] => {
-  return (
-    Array.isArray(value) && value.every((wordbook) => isWordbook(wordbook))
-  );
-};
+const isWordbookArray = (v: unknown): v is Wordbook[] =>
+  Array.isArray(v) && v.every(isWordbook);
 
 const loadWordbooks = (): Wordbook[] => {
-  if (typeof window === "undefined") {
-    return DEFAULT_WORDBOOKS;
-  }
-
+  if (typeof window === "undefined") return DEFAULT_WORDBOOKS;
   const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return DEFAULT_WORDBOOKS;
-  }
-
+  if (!raw) return DEFAULT_WORDBOOKS;
   try {
-    const parsed: unknown = JSON.parse(raw);
-    if (!isWordbookArray(parsed) || parsed.length === 0) {
-      return DEFAULT_WORDBOOKS;
-    }
-
-    return parsed;
+    const parsed = JSON.parse(raw);
+    return isWordbookArray(parsed) ? parsed : DEFAULT_WORDBOOKS;
   } catch {
     return DEFAULT_WORDBOOKS;
   }
@@ -99,47 +74,59 @@ export const useWordbooks = () => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(wordbooks));
   }, [wordbooks]);
 
+  // --- 単語帳の操作 ---
   const addWordbook = (title: string, description: string) => {
-    const now = new Date().toISOString();
-    const newWordbook: Wordbook = {
+    const newBook: Wordbook = {
       id: crypto.randomUUID(),
       title,
       description,
-      updatedAt: now,
+      updatedAt: new Date().toISOString(),
       cards: [],
     };
-
-    setWordbooks((prev) => [newWordbook, ...prev]);
+    setWordbooks((prev) => [newBook, ...prev]);
   };
 
-  const updateWordbook = (
-    id: string,
-    updates: Pick<Wordbook, "title" | "description">,
-  ) => {
-    setWordbooks((prev) =>
-      prev.map((wordbook) => {
-        if (wordbook.id !== id) {
-          return wordbook;
-        }
+  const deleteWordbook = (id: string) => {
+    setWordbooks((prev) => prev.filter((b) => b.id !== id));
+  };
 
+  const addCard = (bookId: string, front: string, back: string) => {
+    setWordbooks((prev) =>
+      prev.map((book) => {
+        if (book.id !== bookId) return book;
+        const newCard: Card = {
+          id: crypto.randomUUID(),
+          front,
+          back,
+          status: "unknown",
+        };
         return {
-          ...wordbook,
-          ...updates,
+          ...book,
+          cards: [newCard, ...book.cards],
           updatedAt: new Date().toISOString(),
         };
       }),
     );
   };
 
-  const deleteWordbook = (id: string) => {
-    setWordbooks((prev) => prev.filter((wordbook) => wordbook.id !== id));
+  const deleteCard = (bookId: string, cardId: string) => {
+    setWordbooks((prev) =>
+      prev.map((book) => {
+        if (book.id !== bookId) return book;
+        return {
+          ...book,
+          cards: book.cards.filter((c) => c.id !== cardId),
+          updatedAt: new Date().toISOString(),
+        };
+      }),
+    );
   };
 
   return {
     wordbooks,
     addWordbook,
-    updateWordbook,
     deleteWordbook,
-    setWordbooks,
+    addCard,
+    deleteCard,
   };
 };
