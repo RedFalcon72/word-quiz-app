@@ -23,12 +23,28 @@ This project was built to practice **React , Tailwind CSS**,and to develop an un
 - [x] Define the data structure
 - [x] Routing settings
 - [x] Create home page
-- [ ] Create and delete word books
-- [ ] Add and delete vocabulary
-- [ ] Create quiz page
+- [x] Create dashboard page
+- [x] Create editor page
+- [x] Create quiz page
 - [x] Save data with LocalStorage
 - [ ] Add additional features
 
 ## How to Run
 
-Clone this repository
+1. Clone this repository:
+
+```bash
+git clone https://github.com/RedFalcon72/word-quiz-app
+```
+
+2. Install dependencies
+
+```bash
+npm install
+```
+
+3. Start the development server
+
+```bash
+npm run dev
+```
