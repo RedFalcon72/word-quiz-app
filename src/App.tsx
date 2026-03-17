@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 import Dashboard from "./pages/dashboard";
 import Quiz from "./pages/quiz";
@@ -6,7 +6,7 @@ import Editor from "./pages/editor";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       {/* 画面全体のベースデザイン */}
       <main className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100">
         <Routes>
@@ -23,6 +23,6 @@ export default function App() {
           <Route path="/book/:id/edit" element={<Editor />} />
         </Routes>
       </main>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
