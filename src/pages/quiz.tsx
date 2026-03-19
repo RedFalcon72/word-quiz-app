@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useWordbooks } from "../hooks/useWordbooks";
 import Flashcard from "../components/quiz/flashcard";
 import ProgressBar from "../components/quiz/ProgressBar";
+import AnswerButtons from "../components/quiz/AnswerButtons";
 
 /**
  * クイズ画面コンポーネント
@@ -122,35 +123,8 @@ const Quiz = () => {
         onFlip={() => setIsFlipped(!isFlipped)}
       />
 
-      {/* 回答ボタンエリア。カードが裏返っているときのみ操作可能とする */}
-      <div
-        className={`grid grid-cols-2 gap-4 transition-all duration-300 ${
-          isFlipped
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-4 pointer-events-none"
-        }`}
-      >
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAnswer("unknown");
-          }}
-          className="p-5 bg-white border-2 border-red-100 text-red-400 rounded-3xl font-black hover:bg-red-50 hover:border-red-200 transition-all flex flex-col items-center gap-1"
-        >
-          <span className="text-xl">🤔</span>
-          <span>Still learning</span>
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAnswer("known");
-          }}
-          className="p-5 bg-white border-2 border-green-100 text-green-500 rounded-3xl font-black hover:bg-green-50 hover:border-green-200 transition-all flex flex-col items-center gap-1"
-        >
-          <span className="text-xl">✅</span>
-          <span>I know this!</span>
-        </button>
-      </div>
+      {/* 回答ボタン。カードが裏返っているときのみ操作可能とする */}
+      <AnswerButtons isFlipped={isFlipped} onAnswer={handleAnswer} />
     </div>
   );
 };
