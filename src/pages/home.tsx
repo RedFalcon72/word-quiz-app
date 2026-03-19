@@ -1,6 +1,6 @@
 import { type FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
 import { useWordbooks } from "../hooks/useWordbooks";
+import WordbookCard from "../components/home/WordbookCard";
 
 const Home = () => {
   const { wordbooks, addWordbook } = useWordbooks();
@@ -61,28 +61,13 @@ const Home = () => {
       {/* リスト表示 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {wordbooks.map((book) => (
-          <Link
+          <WordbookCard
             key={book.id}
-            to={`/book/${book.id}`}
-            className="group bg-white border border-gray-100 rounded-[1.5rem] p-6 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col"
-          >
-            <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
-                {book.title}
-              </h3>
-              <p className="text-gray-500 text-sm line-clamp-2">
-                {book.description || "説明はありません"}
-              </p>
-            </div>
-            <div className="mt-4 pt-4 border-t border-gray-50 flex justify-between items-center text-gray-400">
-              <span className="text-xs font-bold uppercase tracking-wider">
-                {book.cards.length} Cards
-              </span>
-              <span className="text-sm font-bold group-hover:text-blue-500">
-                詳細へ →
-              </span>
-            </div>
-          </Link>
+            id={book.id}
+            title={book.title}
+            description={book.description}
+            cardCount={book.cards.length}
+          />
         ))}
       </div>
     </div>

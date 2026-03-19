@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useWordbooks } from "../hooks/useWordbooks";
-import Flashcard from "../components/quiz/flashcard";
+import Flashcard from "../components/quiz/Flashcard";
 import ProgressBar from "../components/quiz/ProgressBar";
 import AnswerButtons from "../components/quiz/AnswerButtons";
 
