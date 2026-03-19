@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useWordbooks } from "../hooks/useWordbooks";
+import Flashcard from "../components/quiz/flashcard";
 
 /**
  * クイズ画面コンポーネント
@@ -116,35 +117,14 @@ const Quiz = () => {
         </Link>
       </div>
 
-      {/* フラッシュカードUI。keyにカード内容を含め、カード切り替え時に要素をリセットする */}
-      <div
+      {/* フラッシュカードUI。 */}
+      <Flashcard
         key={`${currentIndex}-${currentCard.front}`}
-        onClick={() => setIsFlipped(!isFlipped)}
-        className="relative h-80 w-full cursor-pointer [perspective:1000px]"
-      >
-        <div
-          className={`relative w-full h-full transition-transform duration-500 [transform-style:preserve-3d] ${
-            isFlipped ? "[transform:rotateY(180deg)]" : ""
-          }`}
-        >
-          {/* 表面の表示。translateZ(1px)を付与して裏面との重なりによる透過を防止する */}
-          <div className="absolute inset-0 w-full h-full bg-white border-4 border-slate-900 rounded-[2.5rem] flex items-center justify-center p-8 shadow-[8px_8px_0px_0px_rgba(15,23,42,1)] [backface-visibility:hidden] [transform:translateZ(1px)]">
-            <span className="text-4xl font-black text-slate-800 text-center">
-              {currentCard.front}
-            </span>
-            <span className="absolute bottom-6 text-[10px] font-bold text-gray-300">
-              TAP TO FLIP
-            </span>
-          </div>
-
-          {/* 裏面の表示。rotateY(180deg)で裏側に配置し、backface-visibilityで表面からは隠す */}
-          <div className="absolute inset-0 w-full h-full bg-blue-50 border-4 border-blue-600 rounded-[2.5rem] flex items-center justify-center p-8 [transform:rotateY(180deg)] [backface-visibility:hidden] shadow-[8px_8px_0px_0px_rgba(37,99,235,1)]">
-            <span className="text-4xl font-black text-blue-600 text-center">
-              {currentCard.back}
-            </span>
-          </div>
-        </div>
-      </div>
+        front={currentCard.front}
+        back={currentCard.back}
+        isFlipped={isFlipped}
+        onFlip={() => setIsFlipped(!isFlipped)}
+      />
 
       {/* 回答ボタンエリア。カードが裏返っているときのみ操作可能とする */}
       <div
