@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useWordbooks } from "../hooks/useWordbooks";
 import Flashcard from "../components/quiz/flashcard";
+import ProgressBar from "../components/quiz/ProgressBar";
 
 /**
  * クイズ画面コンポーネント
@@ -98,12 +99,7 @@ const Quiz = () => {
   return (
     <div className="max-w-lg mx-auto p-6 space-y-8">
       {/* 進行状況バー */}
-      <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
-        <div
-          className="bg-blue-500 h-full transition-all duration-500"
-          style={{ width: `${((currentIndex + 1) / cards.length) * 100}%` }}
-        />
-      </div>
+      <ProgressBar progress={((currentIndex + 1) / cards.length) * 100} />
 
       <div className="flex justify-between items-center text-xs font-black text-gray-400 uppercase">
         <span>
